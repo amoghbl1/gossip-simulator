@@ -1,0 +1,51 @@
+# amoghbl1
+#!/bin/sh
+
+P_NUM=1
+N_NUM=5
+INPUT_FILE=input.txt
+INPUT_IDENTIFIER=.tempfile
+echo "Getting all the java classes ready."
+make
+
+while [[ $# > 0 ]]
+do
+    key="$1"
+    case $key in
+        -p)
+        P_NUM="$2"
+        shift
+        ;;
+        -n)
+        N_NUM="$2"
+        shift
+        ;;
+        -i)
+        INPUT_FILE="$2"
+        shift
+        ;;
+        --default)
+        DEFAULT=YES
+        ;;
+        *)
+        ;;
+    esac
+    shift # past argument or value
+done
+
+I=0
+TEMP_FILE="."$INPUT_FILE"."
+while [ "$I" -lt "$P_NUM" ]; do
+    rm -rf $TEMP_FILE$I$INPUT_IDENTIFIER
+    while read line; do
+        echo $I:$line >> $TEMP_FILE$I$INPUT_IDENTIFIER
+        done < $INPUT_FILE
+    echo "Creating process of type 1: $I"
+    ./MyServer $I $N_NUM -i $TEMP_FILE$I$INPUT_IDENTIFIER
+    let I=I+1
+done
+while [ "$I" -lt "$N_NUM" ]; do
+    echo "Creating process of type 2: $I"
+    ./MyServer $I $N_NUM
+    let I=I+1
+done

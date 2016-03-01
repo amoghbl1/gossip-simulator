@@ -1,0 +1,31 @@
+# amoghbl1
+#!/bin/sh
+
+ID=$1
+NUM_PROCESSES=$2
+INPUT=0
+while [[ $# > 0 ]] 
+do
+    key="$1"
+
+    case $key in
+        -i)
+        INPUT=1
+        FILE="$2"
+        shift
+        ;;
+        --default)
+        DEFAULT=YES
+        ;;
+        *)
+        ;;
+    esac
+    shift # past argument or value
+done
+
+if [ "$INPUT" -eq 1 ]; then
+# Need to copy input file and make changes to it.
+    java -cp .:protobuf-2.5.0.jar: GossipNode $ID $NUM_PROCESSES -i $FILE &
+else
+    java -cp .:protobuf-2.5.0.jar: GossipNode $ID $NUM_PROCESSES &
+fi
